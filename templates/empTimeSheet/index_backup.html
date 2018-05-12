@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+
+{% block pageheader %}
+<section class="content-header">
+      <h1 style="color:#d2d6de;" >
+          |
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Upload Excel</li>
+      </ol>
+    </section>
+ {% endblock pageheader %}
+
+{% block content %}
+<div class="box">
+    <div class="box-header">
+        <h3 class="box-title">Upload Excel Data</h3>
+    </div>
+    <div class="row">
+    <div class="col-sm-12">
+        <div class="box box-primary">
+            <div class="box-body pad table-responsive">
+                <table class="table  text-left">
+                    <tbody>
+                    <tr>
+                        <td>
+                            <button id="btn-refresh" type="button" style="width:200px" class="btn btn-block btn-primary btn-sm">Upload Excel Data</button>
+                        </td>
+                        <td>
+                            <select  id="instance-list" type="button" style="width:200px"  >
+                            </select>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.box -->
+        </div>
+    </div>
+    <!-- /.col -->
+                <!-- Loading (remove the following to stop the loading)-->
+                <div class="overlay">
+                  <i class="fa fa-refresh fa-spin"></i>
+                </div>
+                <!-- end loading -->
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+            <div class="row">
+
+                <div class="col-sm-12">
+                    {% if err %}
+                        {% for msg in dataset.err %}
+                            <div class="box box-solid box-warning">{{ msg }}</div>
+                        {% endfor %}
+                    {% else %}
+                        {% if dataset.colheaders %}
+                        <table id="example1" class="table table-bordered table-striped dataTable" role="grid"
+                               aria-describedby="example1_info">
+                            <thead>
+                            <tr role="row">
+                                <!--<th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"-->
+                                    <!--aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending"-->
+                                    <!--style="width: 122.8px;">Rendering engine-->
+                                <!--</th>-->
+                                {% for rw in dataset.colheaders %}
+                                    <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1"
+                                    aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending"
+                                    style="width: 122.8px;" >
+                                         {{ rw }}
+                                    </th>
+                                {% endfor %}
+                            </tr>
+                            </thead>
+                            <tbody id="loaders_refreshed_data">
+                                {% include "loaders_app/refreshed_loader_status.html" %}
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <!--<th rowspan="1" colspan="1">CSS grade</th>-->
+                                {% for rw in dataset.colheaders %}
+                                    <th rowspan="1" colspan="1" >
+                                         {{ rw }}
+                                    </th>
+                                {% endfor %}
+                            </tr>
+                            </tfoot>
+                        </table>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- /.box-body -->
+
+</div>
+{% endblock content %}
+
+
+{% block footer_javascript_section %}
+<script>
+
+    urlstring="{{urlstr}}"
+    $( document ).ready(function() {
+        $('.overlay').hide()
+        if ( ! $.fn.DataTable.isDataTable( '#example1' ) ) {
+            <!--console.log('datatable is NOT existing!!! ')-->
+            $('#example1').DataTable({
+                'paging'      : true,
+                'lengthChange': true,
+                'searching'   : true,
+                'ordering'    : true,
+                'info'        : true,
+                'autoWidth'   : true
+            })
+        }
+
+    <!--populate select 2-->
+    $('#instance-list').select2()
+    $(function () {
+                $.getJSON( "{{ urlstr }}/loaders/instance_list", function(data) {
+                    $('#instance-list').select2({
+                        data: data
+                    });
+                 });
+    });
+    });
+
+   $(document).ajaxStart(function() { Pace.restart(); });
+
+   $('#btn-refresh').click(function(){
+       var urlstr=urlstring+'/loaders/refresh/'+$('#instance-list :selected').text()
+        console.log( urlstring )
+        console.log(typeof urlstring )
+       $.ajax({
+            'type': 'GET',
+            url: urlstr,
+            //data: {category: 2},  This value came come from another element like a categories list
+            //dataType: 'json',  // if you are using json as data transfer format
+            beforeSend: function(mytable) {
+                  // Here we show the loader
+            },
+            success: function(data){
+                  // Here your custom code to work with the requested data
+                  console.log(data )
+                  $("body").html(data)
+            },
+            failure: function(data) {
+                  alert('Got an error dude');
+            }
+      })
+    });
+
+   <!--$('#btn-refresh').click(function(){-->
+       <!--var mytable= $('#example1').DataTable();-->
+       <!--var urlstr='http://127.0.0.1:8000/loaders/refresh/' +  $('#instance-list :selected').text()-->
+       <!--$.ajax({-->
+            <!--'type': 'GET',-->
+            <!--url: urlstr,-->
+            <!--&lt;!&ndash;This value came come from another element like a categories list&ndash;&gt;-->
+            <!--&lt;!&ndash;data: {dbinst: $('#instance-list :selected').text() },&ndash;&gt;-->
+            <!--&lt;!&ndash;if you are using json as data transfer format&ndash;&gt;-->
+            <!--dataType: 'json',-->
+            <!--beforeSend: function(mytable) {-->
+                  <!--// Here we show the loader-->
+                  <!--&lt;!&ndash;var cleardata=""&ndash;&gt;-->
+                  <!--&lt;!&ndash;$('#loaders_refreshed_data').html(cleardata)&ndash;&gt;-->
+                  <!--$('.overlay').show()-->
+                  <!--$('#example1').hide()-->
+            <!--},-->
+            <!--success: function(data){-->
+                  <!--// Here your custom code to work with the requested data-->
+                  <!--console.log(' Ajax called ' )-->
+                  <!--&lt;!&ndash;console.log(data )&ndash;&gt;-->
+                  <!--$('.overlay').hide()-->
+                  <!--$('#loaders_refreshed_data').html(data)-->
+                  <!--$('#example1').show()-->
+            <!--},-->
+            <!--failure: function(data) {-->
+                  <!--alert('Got an error dude');-->
+            <!--},-->
+            <!--complete: function(){-->
+                  <!--// Here we hide the loader because this handler always fires on any failed/success request-->
+                  <!--$('.overlay').hide()-->
+            <!--}-->
+      <!--});-->
+
+      <!--mytable.draw()-->
+
+<!--});-->
+
+</script>
+{% endblock footer_javascript_section %}

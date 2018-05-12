@@ -1,0 +1,65 @@
+{
+	"name": ["K4", "AA4", "AQ4"],
+	"date": "B5",
+	"absence": ["A8", "Q8", "AG8"],
+	"daysWorked": ["E8", "U8", "AK8"],
+	"attendance_data_range": {
+		"colrange": [
+			["A", "D"],
+			["Q", "T"],
+			["AG", "AJ"]
+		],
+		"rowrange": {
+			"start": "13",
+			"end": "MAX_ROW"
+		}
+	},
+	"shift1": {
+		"OpenTime": "10:30:00",
+		"CloseTime": "20:30:00"
+	},
+	"shift2": {
+		"OpenTime": "11:00:00",
+		"CloseTime": "21:00:00"
+	},
+	"ShopConfigExcel": {
+		"colRange": ["A", "E"],
+		"rowRange": {
+			"start": "2",
+			"end": "MAX_ROW"
+		}
+	},
+	"employeeDetails": {
+		"colRange": ["A", "C"],
+		"rowRange": {
+			"start": "2",
+			"end": "MAX_ROW"
+		}
+	},
+	"salaryCalculations": {
+		"hourlyDeductionPercent": {
+			"val": 10,
+			"typ": "percent"
+		},
+		"hourlyAdditionPercent": {
+			"val": 10,
+			"typ": "percent"
+		},
+		"inTimeGracePeriod": {
+			"val": 5,
+			"typ": "minutes"
+		},
+		"overTimeLimit": {
+			"val": 30,
+			"typ": "minutes"
+		},
+		"SundayPresenceHolidayCredit": {
+			"val": 1,
+			"typ": "days"
+		},
+		"TotalLeavesPerMonth": {
+			"val": 4,
+			"typ": "days"
+		}
+	}
+}

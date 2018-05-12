@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+
+{% block pageheader %}
+<section class="content-header">
+      <h1 style="color:#d2d6de;" >
+          _
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Monthly Summary</li>
+      </ol>
+    </section>
+ {% endblock pageheader %}
+
+{% block content %}
+
+<div class="box">
+    <!--<div class="box-header">-->
+        <!--<h3 class="box-title">  </h3>-->
+    <!--</div>-->
+    <div id="ModalInsert">
+    </div>
+    <div class="row">
+    <div class="col-sm-12">
+        <div class="box box-primary">
+            <div class="box-body pad table-responsive">
+                <div class="box">
+                    <div class="box-body">
+                        <div class="margin" >
+                            <div class="btn-group">
+                                <select id="monthlySalaryList" class="js-example-responsive" style="width: 100%" name="monthlySalaryList">
+                                </select>
+                            </div>
+                            <div class="btn-group">
+                                <button id="btn-submit" type="button" class="btn btn-block btn-primary btn-sm">Submit</button>
+                            </div>
+
+                            <br>
+                            <br>
+                            {% if dataset.result %}
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <span >Number of WorkDays: {{dataset.result.totalWorkdays }}</span>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <span>Date Range: {{dataset.result.monthStart }} - {{dataset.result.monthEnd }}</span>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            <!-- /.box -->
+                <div class="box">
+                    <div class="box-body pad table-responsive">
+                        <div class="margin" >
+                    {% if dataset.err %}
+                        <p> Error:</p>
+                        {% for msg in dataset.err %}
+                            <div class="box box-solid box-warning">{{ msg }}</div>
+                        {% endfor %}
+                    {% else %}
+
+                    <table id="EmployeeSummary" class="table table-hover" >
+                        <thead>
+                        <tr>
+                            <th rowspan="2">Employee Name</th>
+                            <th colspan="2">Salary Details</th>
+                            <th colspan="5">Attendence Information</th>
+                            <th colspan="5">Calculated Salary Summary</th>
+                        </tr>
+                        <tr>
+                            <!--<th>Employee Name</th>-->
+                            <th>Monthly Salary</th>
+                            <!--<th>WorkDays</th>-->
+                            <th>Daily Salary</th>
+                            <th>Holidays Allowed</th>
+                            <th>Holidays Taken</th>
+                            <th>Holidays Worked</th>
+                            <th>Sunday Absence</th>
+                            <th>Times Late</th>
+                            <th>Deductions</th>
+                            <th>Additions</th>
+                            <th>Calculated Salary</th>
+                            <!--<th>Work Hours</th>-->
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for key,val in dataset.result.items %}
+                                {% if key != 'monthStart' and key != 'monthEnd' and key != 'totalWorkdays' and key != 'err' %}
+                                    <tr>
+                                            <td> <a href="#myModal">{{ key }}</a> </td>
+                                            <td> {{ val.totalMonthlySalary }} </td>
+                                            <!--<td> {{ val.totalWorkdays }} </td>-->
+                                            <td> {{ val.dailySalary }} </td>
+                                            <td> {{ val.totalHolidaysAllowed }} </td>
+
+                                            <td> {{ val.totalHolidaytaken }} </td>
+                                            <td> {{ val.totalHolidaysWorked }} </td>
+                                            <td> {{ val.totalSundaysAbsent }} </td>
+                                            <td> {{ val.totalTimesLate }} </td>
+                                            <td> {{ val.totaldeductions }} </td>
+                                            <td> {{ val.totalAdditions }} </td>
+                                            <td> {{ val.CalculatedSalary }} </td>
+                                            <!--<td> {{ val.workhours }} </td>-->
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                    {% endif %}
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            <!-- /.box -->
+            </div>
+        </div>
+    </div>
+    <!-- /.col -->
+    </div>
+
+</div>
+{% endblock content %}
+
+
+{% block footer_javascript_section %}
+<script>
+
+   $(document).ajaxStart(function() { Pace.restart(); });
+
+   $(document).ready(function() {
+    $('#EmployeeSummary').DataTable();
+    } );
+
+   {% for key,values in dataset.result.items %}
+        {% if key == 'monthEnd' %}
+            var jsMonthEnd="{{values}}"
+            console.log('Month End' + jsMonthEnd )
+        {% endif %}
+        {% if key == 'monthStart' %}
+            var jsMonthStart="{{values}}"
+            console.log('Month Start' + jsMonthStart  )
+        {% endif %}
+   {% endfor %}
+
+
+
+    $(document).ready(function () {
+    var urlstr=urlstring+'/timesheet/getMonths/'
+        $('#monthlySalaryList').select2({
+            placeholder: 'Select a Month  ',
+            allowClear: true,
+            ajax: {
+                quietMillis: 10,
+                cache: false,
+                dataType: 'json',
+                type: 'GET',
+                url: urlstr,
+                processResults: function (data) {
+                  // Tranforms the top-level key of the response object from 'items' to 'results'
+                  return {
+                    results: data.data
+                  };
+                }
+            }
+        });
+    });
+
+   $('#btn-submit').click(function(){
+        urlstr=urlstring+'/timesheet/salarySummary?monthStart='+$("#monthlySalaryList :selected").text()
+        <!--alert( urlstr )-->
+        console.log(typeof urlstr )
+
+       $.ajax({
+            'type': 'GET',
+            url: urlstr,
+            //data: {category: 2},  This value came come from another element like a categories list
+            //dataType: 'json',  // if you are using json as data transfer format
+            beforeSend: function(mytable) {
+                  // Here we show the loader
+                  $('.showResult').hide()
+            },
+            success: function(data){
+                  // Here your custom code to work with the requested data
+                  console.log(data )
+                  $("body").html(data)
+                  $('.showResult').show()
+            },
+            failure: function(data) {
+                  alert('Got an error dude');
+            }
+      })
+    });
+
+    $('a').on('click', function(e) {
+        urlstr=urlstring+'/timesheet/detailmonthlyreport/?monthStart='+jsMonthStart+'&empname='+$(this).text()
+        e.preventDefault();
+        <!--alert($(this).text() + "-&#45;&#45;&#45;&#45;"+ urlstr);-->
+        $.ajax({
+            'type': 'GET',
+            url: urlstr,
+            beforeSend: function(mytable) {
+                  // Here we show the loader
+                  $('.showResult').hide()
+            },
+            success: function(data){
+                  // Here your custom code to work with the requested data
+                  console.log(data )
+                  $('body').html(data)
+                  <!--$("#ModalInsert").replaceWith(data);-->
+                  <!--$('.showResult').show()-->
+                  $('#Details').DataTable({
+                });
+                  <!--$("#myModal").modal()-->
+            },
+            failure: function(data) {
+                  alert('Got an error dude');
+            }
+        })
+
+
+    });
+
+</script>
+{% endblock footer_javascript_section %}

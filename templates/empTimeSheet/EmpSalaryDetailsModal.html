@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+
+{% block pageheader %}
+<section class="content-header">
+      <h1 style="color:#d2d6de;" >
+          _
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Employee Details</li>
+      </ol>
+    </section>
+ {% endblock pageheader %}
+
+{% block content %}
+
+<div class="box">
+    <div class="row">
+    <div class="col-sm-12">
+        <div class="box box-primary">
+            <div class="box-body pad table-responsive">
+                <div class="box">
+                    <div class="box-body">
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    {% if dataset.err and dataset.err|length > 1 %}
+                                    <p> Error:</p>
+                                        {% for msg in dataset.err %}
+                                            <div class="box box-solid box-warning">{{ msg }}</div>
+                                        {% endfor %}
+                                    {% else %}
+
+                                    <!--<div class="modal fade" id="myModal">-->
+                                        <!--<div class="modal-dialog">-->
+                                          <!-- Modal content-->
+                                          <!--<div class="modal-content">-->
+                                            <!--<div class="reveal-modal-terms">-->
+                                                <table id="Summary" class="table table-hover" >
+                                                        <thead>
+                                                        <!--<tr role="row">-->
+                                                            <!--{% for key in dataset.EmpSummary.keys %}-->
+                                                            <!--<th> {{key}}</th>-->
+                                                            <!--{% endfor %}-->
+                                                        <!--</tr>-->
+                                                        <tr>
+                                                            <th rowspan="2">Employee Name</th>
+                                                            <th colspan="2">Salary Details</th>
+                                                            <th colspan="5">Attendence Information</th>
+                                                            <th colspan="5">Calculated Salary Summary</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <!--<th>Employee Name</th>-->
+                                                            <th>Monthly Salary</th>
+                                                            <!--<th>WorkDays</th>-->
+                                                            <th>Daily Salary</th>
+                                                            <th>Holidays Allowed</th>
+                                                            <th>Holidays Taken</th>
+                                                            <th>Holidays Worked</th>
+                                                            <th>Sunday Absence</th>
+                                                            <th>Times Late</th>
+                                                            <th>Deductions</th>
+                                                            <th>Additions</th>
+                                                            <th>Calculated Salary</th>
+                                                            <!--<th>Work Hours</th>-->
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr role="row">
+                                                            <td class="btn bg-olive btn-flat margin">{{dataset.EmpSummary.0.0|capfirst}}</td>
+                                                            <td>{{dataset.EmpSummary.0.1|default:0}}</td>
+                                                            <td>{{dataset.EmpSummary.0.2|default:0}}</td>
+                                                            <td>{{dataset.EmpSummary.0.3|default:0}}</td>
+                                                            <td>{{dataset.EmpSummary.0.4|default:0}}</td>
+                                                            <td>{{dataset.EmpSummary.0.5|default:0}}</td>
+                                                            <td>{{dataset.EmpSummary.0.6|default:0}}</td>
+                                                            <td>{{dataset.EmpSummary.0.7|default:0}}</td>
+                                                            <td>{{dataset.EmpSummary.0.8|default:0}}</td>
+                                                            <td>{{dataset.EmpSummary.0.9|default:0}}</td>
+                                                            <td>{{dataset.EmpSummary.0.10|default:0}}</td>
+                                                        </tr>
+                                                        </tbody>
+                                                </table>
+
+                                                <table id="Details" class="table table-hover" >
+                                                        <!--<thead>-->
+                                                        <!--<tr role="row">-->
+                                                            <!--{% for month in dataset.Details|slice:":1" %}-->
+                                                                <!--{% for key in month.keys %}-->
+                                                                    <!--<th> {{key }}</th>-->
+                                                                <!--{% endfor %}-->
+                                                            <!--{% endfor %}-->
+                                                        <!--</tr>-->
+
+                                                        <thead>
+                                                        <tr>
+                                                            <th></th>
+                                                            <th></th>
+                                                            <th colspan="5">Shift Details</th>
+                                                            <th colspan="9">Employee time details</th>
+                                                            <th colspan="4">Daily Salary Calculation</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Day</th>
+                                                            <th>Week Day</th>
+
+                                                            <!--Shift Details-->
+                                                            <th>Start</th>
+                                                            <th>End</th>
+                                                            <th>Hrs</th>
+                                                            <th>Type</th>
+                                                            <th>Comment</th>
+
+
+                                                            <!--Employee time details-->
+                                                            <th>In</th>
+                                                            <th>Out</th>
+                                                            <th>Enf. In</th>
+                                                            <th>Enf. Out</th>
+                                                            <th>Hrs Late</th>
+                                                            <th>Hrs OverTime</th>
+                                                            <th>Absent</th>
+                                                            <th>Half Day</th>
+                                                            <th>Holid. Credit</th>
+
+                                                            <!--Salary Calculation-->
+                                                            <th>Perct Add.</th>
+                                                            <th>Perct Ded.</th>
+                                                            <th>Add.</th>
+                                                            <th>Sub.</th>
+
+                                                        </tr>
+                                                        </thead>
+
+                                                            {%for val in dataset.Details %}
+                                                            <tr>
+                                                                <td>{{val.0|default:"NA"|date:"SHORT_DATE_FORMAT"}}</td>
+                                                                <td>{{val.1|default:"NA"}}</td>
+                                                                <td>{{val.2|default:"00:00"|time:"H:i"}}</td>
+                                                                <td>{{val.3|default:"00:00"|time:"H:i"}}</td>
+                                                                <td>{{val.4|default:"0"}}</td>
+                                                                <td>{{val.5|default:"NA"}}</td>
+                                                                <td>{{val.6|default:"NA"}}</td>
+                                                                {% if val.7 > val.8 %}
+                                                                    <td class="btn bg-maroon margin">{{val.7|default:"00:00"|time:"H:i"}}</td>
+                                                                {% else %}
+                                                                    <td>{{val.7|default:"00:00"|time:"H:i"}}</td>
+                                                                {% endif %}
+                                                                <td>{{val.8|default:"00:00"|time:"H:i"}}</td>
+                                                                <td>{{val.9|default:"00:00"|time:"H:i"}}</td>
+                                                                <td>{{val.10|default:"00:00"|time:"H:i"}}</td>
+                                                                <td>{{val.11|default:"0"}}</td>
+                                                                <td>{{val.12|default:"0"}}</td>
+                                                                <td>{{val.13|default:"0"}}</td>
+                                                                <td>{{val.14|default:"0"}}</td>
+                                                                <td>{{val.15|default:"0"}}</td>
+                                                                <td>{{val.16|default:"0"}}</td>
+                                                                <td>{{val.17|default:"0"}}</td>
+                                                                <td>{{val.18|default:"0"}}</td>
+                                                                <td>{{val.19|default:"0"}}</td>
+                                                            </tr>
+                                                            {%endfor%}
+
+                                                        </thead>
+                                                        <tbody>
+                                                        </tbody>
+                                                </table>
+                                            <!--</div>-->
+                                          <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+
+
+                                    {% endif %}
+                                </div>
+                            </div>
+                            </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+            <!-- /.box -->
+        </div>
+    </div>
+    </div>
+</div>
+
+{% endblock content %}

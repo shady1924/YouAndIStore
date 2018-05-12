@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+
+{% block pageheader %}
+<section class="content-header">
+      <h1 style="color:#d2d6de;" >
+          _
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Upload Excel</li>
+      </ol>
+    </section>
+ {% endblock pageheader %}
+
+{% block content %}
+
+
+<div class="box">
+    <div class="row">
+    <div class="col-sm-12">
+        <div class="box box-primary">
+            <div class="box-body pad table-responsive">
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title">Upload Employee Timesheet</h3>
+                    </div>
+                    <div class="box-body">
+                        <div class="margin" >
+                            <div class="btn-group">
+                                <input id="filepath" type="text" class="form-control" placeholder="Enter Excel name ...">
+                            </div>
+                            <div class="btn-group">
+                                <button id="btn-upload" type="button" class="btn btn-block btn-primary btn-sm">Upload Excel Data</button>
+                            </div>
+                            {% if dataset.result %}
+                            <div class="btn-group">
+                                <button id="btn-summary" type="button" class="btn btn-block btn-primary btn-sm">View Salary Summary</button>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <div class="row">
+                                <div class="showResult">
+                                <div class="col-sm-12">
+                                    {% if dataset.err and dataset.err|length > 1 %}
+                                    <p> Error:</p>
+                                        {% for msg in dataset.err %}
+                                            <div class="box box-solid box-warning">{{ msg }}</div>
+                                        {% endfor %}
+                                    {% else %}
+                                        {% if dataset.result %}
+                                        <div class="box box-solid box-warning">Success!!</div>
+                                        <table id="InsertedDetails" class="table table-hover" >
+                                            <thead>
+                                            <tr role="row">
+                                                <th> Name</th>
+                                                <th> Sheet</th>
+                                                <th> Days Absent</th>
+                                                <th> Days Worked</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for key,values in dataset.result.items %}
+                                                <tr>
+                                                    {% if key != 'monthStart' and key != 'monthEnd' %}
+                                                    <td>
+                                                        {{key}}
+                                                    </td>
+                                                    {% endif %}
+                                                    {% for keys, vals in  values.items %}
+                                                        <td>
+                                                             {{ vals }}
+                                                        </td>
+                                                    {% endfor %}
+                                                {% endfor %}
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                            </tfoot>
+                                        </table>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                                </div>
+                            </div>
+                            </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+
+                <!--Used to update the store configuration-->
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title">Upload/Update Store Configuration</h3>
+                    </div>
+                    <div class="box-body">
+                    <div class="margin" >
+                        <div class="btn-group">
+                            <button id="btn-update-config" type="button" class="btn btn-block btn-primary btn-sm">Update Store Config</button>
+                        </div>
+                    </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <div class="row">
+                                <div class="showResult">
+                                <div class="col-sm-12">
+                                    {% if saveStoreConfigdataset.updateConfigErr %}
+                                        {% for msg in saveStoreConfigdataset.updateConfigErr %}
+                                            <div class="box box-solid box-warning">{{ msg }}</div>
+                                        {% endfor %}
+                                    {% else %}
+                                        {% if saveStoreConfigdataset.updateConfigresult %}
+
+                                        <div class="box-header">
+                                            <h3 class="box-title">Shop Config Details</h3>
+                                        </div>
+                                        <table id="configSummary"  class="table table-hover" >
+                                            <thead>
+                                            <tr role="row">
+                                                <th> Date:Shift</th>
+                                                <th> Operation Status</th>
+                                                <th> Success</th>
+                                                <th> Modified</th>
+                                                <th> Updated Existing</th>
+                                            </tr>
+                                            </thead>
+
+                                            <tbody >
+                                            <!--Store Config details    -->
+                                            {% for key,values in saveStoreConfigdataset.updateConfigresult.items %}
+                                                <tr>
+                                                        <td >
+                                                             {{ key }}
+                                                        </td>
+                                                    {% for keys, vals in  values.items %}
+                                                        <td>
+                                                             {{ vals }}
+                                                        </td>
+                                                    {% endfor %}
+
+                                                    {{ break }}
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                        <div class="box-header">
+                                            <h3 class="box-title">Employee Details</h3>
+                                        </div>
+                                            <!--Employee details     -->
+                                        <table id="uploadSummary" class="table table-hover" >
+                                            <thead>
+                                            <tr role="row">
+                                                <th> Employee Name</th>
+                                                <th> Operation Status</th>
+                                                <th> Success</th>
+                                                <th> Modified</th>
+                                                <th> Updated Existing</th>
+                                            </tr>
+                                            </thead>
+
+                                            <tbody >
+
+                                            {% for key,values in saveStoreConfigdataset.empInfoUpdateResult.items %}
+                                                <tr>
+                                                        <td >
+                                                             {{ key }}
+                                                        </td>
+                                                    {% for keys, vals in  values.items %}
+                                                        <td>
+                                                             {{ vals }}
+                                                        </td>
+                                                    {% endfor %}
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                                </div>
+                            </div>
+                            </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+
+            </div>
+            <!-- /.box -->
+        </div>
+    </div>
+    </div>
+
+</div>
+{% endblock content %}
+
+
+{% block footer_javascript_section %}
+<script>
+
+   $(document).ajaxStart(function() { Pace.restart(); });
+
+   $(document).ready(function() {
+    $("#InsertedDetails").DataTable();
+    $("table.table").DataTable();
+    } );
+
+
+   {% for key,values in dataset.result.items %}
+        {% if key == 'monthEnd' %}
+            var jsMonthEnd="{{values}}"
+            console.log('Month End' + jsMonthEnd )
+        {% endif %}
+        {% if key == 'monthStart' %}
+            var jsMonthStart="{{values}}"
+            console.log('Month Start' + jsMonthStart  )
+        {% endif %}
+   {% endfor %}
+
+   $('#btn-upload').click(function(){
+       var urlstr=urlstring+'/timesheet/saveexcel?filname='+$('#filepath').val()
+        console.log( urlstring )
+        console.log(typeof urlstring )
+       $.ajax({
+            'type': 'GET',
+            url: urlstr,
+            //data: {category: 2},  This value came come from another element like a categories list
+            //dataType: 'json',  // if you are using json as data transfer format
+            beforeSend: function(mytable) {
+                  // Here we show the loader
+                  $('.showResult').hide()
+            },
+            success: function(data){
+                  // Here your custom code to work with the requested data
+                  console.log(data )
+                  $("body").html(data)
+                  $('.showResult').show()
+            },
+            failure: function(data) {
+                  alert('Got an error dude');
+            }
+      })
+    });
+
+
+   $('#btn-update-config').click(function(){
+       var urlstr=urlstring+'/timesheet/saveStoreConfig'
+       $.ajax({
+            'type': 'GET',
+            url: urlstr,
+            //data: {category: 2},  This value came come from another element like a categories list
+            //dataType: 'json',  // if you are using json as data transfer format
+            beforeSend: function(mytable) {
+                  // Here we show the loader
+                  $('.showResult').hide()
+            },
+            success: function(data){
+                  // Here your custom code to work with the requested data
+                  console.log(data )
+                  $("body").html(data)
+                  $('.showResult').show()
+            },
+            failure: function(data) {
+                  alert('Got an error dude');
+            }
+      })
+    });
+
+   $('#btn-summary').click(function(){
+       var urlstr=""
+       if (typeof jsMonthStart !== 'undefined' ) {
+            urlstr=urlstring+'/timesheet/salarySummary?monthStart='+jsMonthStart
+       }
+       else{
+            console.log("Url for btn-summary is not set")
+            urlstr=urlstring+'/timesheet/applyBusinessRules/'
+       }
+
+        console.log( urlstr )
+        console.log(typeof urlstr )
+
+       $.ajax({
+            'type': 'GET',
+            url: urlstr,
+            //data: {category: 2},  This value came come from another element like a categories list
+            //dataType: 'json',  // if you are using json as data transfer format
+            beforeSend: function(mytable) {
+                  // Here we show the loader
+                  $('.showResult').hide()
+            },
+            success: function(data){
+                  // Here your custom code to work with the requested data
+                  console.log(data )
+                  $("body").html(data)
+                  $('.showResult').show()
+            },
+            failure: function(data) {
+                  alert('Got an error dude');
+            }
+      })
+    });
+
+
+
+
+</script>
+{% endblock footer_javascript_section %}
