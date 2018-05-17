@@ -14,7 +14,7 @@ from collections import namedtuple
 class Timesheet:
     def __init__(self, workdir=os.getcwd()):
         self.__workdir = workdir
-        self.__printFalg = False
+        self.__printFalg = True
 
     def getcurrdir(self):
         return self.__workdir

@@ -3,6 +3,7 @@
 	"date": "B5",
 	"absence": ["A8", "Q8", "AG8"],
 	"daysWorked": ["E8", "U8", "AK8"],
+	"dept": ["B4","R4", "AH4" ],
 	"attendance_data_range": {
 		"colrange": [
 			["A", "D"],
@@ -14,13 +15,17 @@
 			"end": "MAX_ROW"
 		}
 	},
-	"shift1": {
+	"DEPT1": {
 		"OpenTime": "10:30:00",
 		"CloseTime": "20:30:00"
 	},
-	"shift2": {
+	"DEPT2": {
 		"OpenTime": "11:00:00",
 		"CloseTime": "21:00:00"
+	},
+	"DEPT3": {
+		"OpenTime": "08:00:00",
+		"CloseTime": "18:00:00"
 	},
 	"ShopConfigExcel": {
 		"colRange": ["A", "E"],
